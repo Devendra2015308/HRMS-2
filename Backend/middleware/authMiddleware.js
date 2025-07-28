@@ -26,4 +26,22 @@ const verifyUser = async (req, res, next) => {
   }
 };
 
-export default verifyUser;
+const verifyAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Admin resource, access denied' });
+  }
+};
+
+// Authorize middleware factory
+const authorize = (role) => (req, res, next) => {
+  if (req.user && req.user.role === role) {
+    next();
+  } else {
+    return res.status(403).json({ message: `Require ${role} role` });
+  }
+};
+
+
+export { verifyUser, verifyAdmin, authorize }; // Export authorize
