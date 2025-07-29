@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { requestLeave, getMyLeaveRequests, getAllLeaveRequests, updateLeaveRequestStatus } from '../controllers/leaveController.js';
+import { requestLeave, getMyLeaveRequests, updateLeaveRequestStatus, getAllLeaveRequests } from '../controllers/leaveController.js';
 import { verifyUser, verifyAdmin } from '../middleware/authMiddleware.js';
 
 router.post('/request', verifyUser, requestLeave);

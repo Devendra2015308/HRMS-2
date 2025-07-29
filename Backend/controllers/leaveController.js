@@ -1,6 +1,7 @@
-const LeaveRequest = require('../models/LeaveRequest');
-const Employee = require('../models/Employee');
-const User = require('../models/User'); // Import User model
+// leaveController.js
+import LeaveRequest from "../models/LeaveRequest.js";
+import Employee from "../models/Employee.js";
+import User from "../models/User.js";
 
 // Request leave
 const requestLeave = async (req, res) => {
@@ -11,7 +12,7 @@ const requestLeave = async (req, res) => {
     const employee = await Employee.findOne({ user: req.user.id });
 
     if (!employee) {
-      return res.status(404).json({ message: 'Employee not found' });
+      return res.status(404).json({ message: "Employee not found" });
     }
 
     const leaveRequest = new LeaveRequest({
@@ -25,7 +26,7 @@ const requestLeave = async (req, res) => {
     res.status(201).json(createdLeaveRequest);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -36,25 +37,29 @@ const getMyLeaveRequests = async (req, res) => {
     const employee = await Employee.findOne({ user: req.user.id });
 
     if (!employee) {
-      return res.status(404).json({ message: 'Employee not found' });
+      return res.status(404).json({ message: "Employee not found" });
     }
 
-    const leaveRequests = await LeaveRequest.find({ employee: employee._id }).sort({ createdAt: -1 });
+    const leaveRequests = await LeaveRequest.find({
+      employee: employee._id,
+    }).sort({ createdAt: -1 });
     res.json(leaveRequests);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
 // Get all leave requests (Admin only)
 const getAllLeaveRequests = async (req, res) => {
   try {
-    const leaveRequests = await LeaveRequest.find({}).populate('employee', 'name').sort({ createdAt: -1 });
+    const leaveRequests = await LeaveRequest.find({})
+      .populate("employee", "name")
+      .sort({ createdAt: -1 });
     res.json(leaveRequests);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -67,7 +72,7 @@ const updateLeaveRequestStatus = async (req, res) => {
     const leaveRequest = await LeaveRequest.findById(id);
 
     if (!leaveRequest) {
-      return res.status(404).json({ message: 'Leave request not found' });
+      return res.status(404).json({ message: "Leave request not found" });
     }
 
     leaveRequest.status = status;
@@ -76,11 +81,11 @@ const updateLeaveRequestStatus = async (req, res) => {
     res.json(leaveRequest);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-module.exports = {
+export {
   requestLeave,
   getMyLeaveRequests,
   getAllLeaveRequests,
