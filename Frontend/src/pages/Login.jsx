@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 
@@ -8,7 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const { login } = useAuth();
+  const { login, user } = useAuth(); // Get user from context
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,14 +24,9 @@ const Login = () => {
       console.log(response);
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        // The login function in authContext will set the user in state and local storage
         login(response.data.user);
-
-        if (response.data.user.role === "admin") {
-          navigate("/admin-dashboard", { replace: true });
-        } else {
-          navigate("/employee-dashboard", { replace: true });
-        }
+        // Navigation will now be handled by the useEffect hook
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -46,6 +41,17 @@ const Login = () => {
       }
     }
   };
+
+  // Effect to navigate after user is set in context
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin") {
+        navigate("/admin-dashboard", { replace: true });
+      } else {
+        navigate("/employee-dashboard", { replace: true });
+      }
+    }
+  }, [user, navigate]); // Depend on user and navigate
 
   return (
     <div className="flex flex-col items-center h-screen justify-center bg-gradient-to-b from-teal-600 from-50% to-gray-100 to-50% space-y-6">
